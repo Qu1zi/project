@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Starbucks</string>
+    <string name="welcome">Добро пожаловать!</string>
+    <string name="username_hint">Имя пользователя</string>
+    <string name="password_hint">Пароль</string>
+    <string name="open">ВОЙТИ</string>
+</resources>
