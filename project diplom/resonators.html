@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Резонаторы</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <div>
+      <a href="clients.html"><button class="tab-button">Заказчики</button></a>
+      <a href="products.html"><button class="tab-button">Изделия</button></a>
+      <a href="resonators.html"><button class="tab-button" disabled>Резонаторы</button></a>
+      <a href="orders.html"><button class="tab-button">Заказы</button></a>
+      <a href="routes.html"><button class="tab-button">Маршрут</button></a>
+      <a href="done.html"><button class="tab-button">Готовый заказ</button></a>
+      <a href="admin.html"><button class="tab-button" id="adminTabButton">Админ</button></a>
+    </div>
+    <div id="accountSection" style="display:none; align-items:center; gap:10px;">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" style="width:32px; height:32px; border-radius:50%;" />
+      <span id="userFio"></span>
+      <button onclick="logout()">Выйти</button>
+    </div>
+  </nav>
+
+  <section id="resonatorsTab" class="tab-content active">
+    <h2>Резонаторы</h2>
+    <input
+      type="text"
+      id="searchResonatorInput"
+      placeholder="Поиск по названию..."
+      oninput="filterResonators()"
+      style="margin: 10px 0; padding: 8px; width: 250px;"
+    />
+    <button class="action-button secondary" onclick="toggleResonatorForm()">Добавить резонатор</button>
+    <form id="resonatorForm" class="hidden" onsubmit="addResonator(event)">
+      <input type="text" placeholder="Название резонатора" required id="resonatorName" />
+      <input type="text" placeholder="Примечание" id="resonatorNote" />
+      <button type="submit">Сохранить</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Примечание</th>
+        </tr>
+      </thead>
+      <tbody id="resonatorTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const email = localStorage.getItem('userEmail');
+      if (!email) {
+        window.location.href = 'index.html';
+      } else {
+        const accountSection = document.getElementById('accountSection');
+        const userFioSpan = document.getElementById('userFio');
+        const userFio = localStorage.getItem('userFIO') || email;
+        if (accountSection && userFioSpan) {
+          userFioSpan.textContent = userFio;
+          accountSection.style.display = 'flex';
+        }
+        loadResonators();
+      }
+      hideIfNotAllowed('adminTabButton', ['admin']);
+    });
+  </script>
+</body>
+</html>

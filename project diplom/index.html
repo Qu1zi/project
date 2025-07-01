@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Вход и регистрация</title>
+  <link rel="stylesheet" href="login-style.css" />
+  <script src="auth.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <input type="checkbox" id="check">
+    <div class="login form">
+      <header>Вход</header>
+      <form id="loginForm">
+        <input type="text" name="email" id="loginEmail" placeholder="Введите email">
+        <input type="password" name="password" id="loginPassword" placeholder="Введите пароль">
+        <a href="#">Забыли пароль?</a>
+        <input type="submit" class="button" value="Login">
+      </form>
+      <div class="signup">
+        <span class="signup">Ещё нет аккаунта?
+         <label for="check">Зарегистрироваться</label>
+        </span>
+      </div>
+    </div>
+    <div class="registration form">
+      <header>Регистарция</header>
+      <form id="registerForm">
+        <input type="text" name="lastname" id="registerLastname" placeholder="Введите фамилию">
+        <input type="text" name="firstname" id="registerFirstname" placeholder="Введите имя">
+        <input type="text" name="middlename" id="registerMiddlename" placeholder="Введите отчество">
+        <input type="text" name="email" id="registerEmail" placeholder="Введите email">
+        <input type="password" name="password" id="registerPassword" placeholder="Придумайте пароль">
+        <input type="password" id="confirmPassword" placeholder="Повторите пароль">
+        <input type="submit" class="button" value="Зарегистрироваться">
+      </form>
+      <div class="signup">
+        <span class="signup">Уже есть аккаунт?
+         <label for="check">Войти</label>
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

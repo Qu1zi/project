@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Маршрут</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <div>
+      <a href="clients.html"><button class="tab-button">Заказчики</button></a>
+      <a href="products.html"><button class="tab-button">Изделия</button></a>
+      <a href="resonators.html"><button class="tab-button">Резонаторы</button></a>
+      <a href="orders.html"><button class="tab-button">Заказы</button></a>
+      <a href="routes.html"><button class="tab-button" disabled>Маршрут</button></a>
+      <a href="done.html"><button class="tab-button">Готовый заказ</button></a>
+      <a href="admin.html"><button class="tab-button" id="adminTabButton">Админ</button></a>
+    </div>
+    <div id="accountSection">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User"/>
+      <span id="userFio"></span>
+      <button onclick="logout()">Выйти</button>
+    </div>
+  </nav>
+
+  <section id="routesTab" class="tab-content active">
+    <h2>Маршруты</h2>
+    <button class="action-button secondary" onclick="toggleForm('routeForm')" id="addClientButton">Добавить маршрут</button>
+
+    <form id="routeForm" class="hidden">
+      <select id="orderSelect" name="orderID" required></select>
+      <input type="number" id="productID" name="productID" placeholder="ID изделия" required />
+      <input type="text" id="routeN" name="routeN" placeholder="Этап маршрута" required />
+      <input type="date" id="routeDate" name="routeDate" placeholder="Дата этапа" required />
+      <input type="text" id="productSerial" name="productSerial" placeholder="Серийный номер" />
+      <input type="text" id="routeNote" name="routeNote" placeholder="Примечание" />
+      <button type="submit">Сохранить</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Заказ</th>
+          <th>Этап</th>
+          <th>Дата</th>
+          <th>ID изделия</th>
+          <th>Серийный №</th>
+          <th>Примечание</th>
+        </tr>
+      </thead>
+      <tbody id="routeTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const email = localStorage.getItem('userEmail');
+    if (!email) {
+      window.location.href = 'index.html';
+    } else {
+      const accountSection = document.getElementById('accountSection');
+      const userFioSpan = document.getElementById('userFio');
+      const userFio = localStorage.getItem('userFIO') || email;
+      if (accountSection && userFioSpan) {
+        userFioSpan.textContent = userFio;
+        accountSection.style.display = 'flex';
+      }
+
+      // 🟢 Скрыть кнопку "Добавить маршрут", если роль не admin или manager
+      hideIfNotAllowed('addClientButton', ['admin', 'manager']);// Скрыть форму 'routeForm' если нужно (если надо)
+      hideIfNotAllowed('routeForm', ['admin', 'manager']);
+    }
+    hideIfNotAllowed('adminTabButton', ['admin']);
+  });
+  </script>
+</body>
+</html>

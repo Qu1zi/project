@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Изделия</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <div>
+      <a href="clients.html"><button class="tab-button">Заказчики</button></a>
+      <a href="products.html"><button class="tab-button" disabled>Изделия</button></a>
+      <a href="resonators.html"><button class="tab-button">Резонаторы</button></a>
+      <a href="orders.html"><button class="tab-button">Заказы</button></a>
+      <a href="routes.html"><button class="tab-button">Маршрут</button></a>
+      <a href="done.html"><button class="tab-button">Готовый заказ</button></a>
+      <a href="admin.html"><button class="tab-button" id="adminTabButton">Админ</button></a>
+    </div>
+    <div id="accountSection">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" />
+      <span id="userFio"></span>
+      <button onclick="logout()">Выйти</button>
+    </div>
+  </nav>
+
+  <section id="productsTab" class="tab-content active">
+    <h2>Изделия</h2>
+    <input type="text" id="searchProductInput" placeholder="Поиск по названию изделий..." oninput="filterProducts()" style="margin: 10px 0; padding: 8px; width: 250px;" />
+    <button class="action-button secondary" onclick="toggleForm('productForm')">Добавить датчик</button>
+    <form id="productForm" class="hidden" onsubmit="addProduct(event)">
+      <input type="text" placeholder="Название изделия" required id="productName" />
+      <input type="text" placeholder="Категория" id="productCate" />
+      <input type="text" placeholder="Внешний вид" id="productAppearance" />
+      <input type="file" id="productPhoto" accept="image/*" />
+      <button type="submit">Сохранить</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Категория</th>
+          <th>Внешний вид</th>
+          <th>Фото</th>
+        </tr>
+      </thead>
+      <tbody id="productTableBody"></tbody>
+    </table>
+
+  <div id="clientsModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeClientsModal()">×</span>
+      <h3>Клиенты, заказывавшие изделие</h3>
+      <ul id="clientsList"></ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const email = localStorage.getItem('userEmail');
+    if (!email) {
+      window.location.href = 'index.html';
+    } else {
+      const accountSection = document.getElementById('accountSection');
+      const userFioSpan = document.getElementById('userFio');
+      const userFio = localStorage.getItem('userFIO') || email;
+      if (accountSection && userFioSpan) {
+        userFioSpan.textContent = userFio;
+      }
+      if (typeof loadProducts === 'function') {
+        loadProducts();
+      }
+    }
+    hideIfNotAllowed('adminTabButton', ['admin']);
+  });
+  </script>
+</body>
+</html>

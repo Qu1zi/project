@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Администрирование</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <div>
+      <a href="clients.html"><button class="tab-button">Заказчики</button></a>
+      <a href="products.html"><button class="tab-button">Изделия</button></a>
+      <a href="resonators.html"><button class="tab-button">Резонаторы</button></a>
+      <a href="orders.html"><button class="tab-button">Заказы</button></a>
+      <a href="routes.html"><button class="tab-button">Маршрут</button></a>
+      <a href="done.html"><button class="tab-button">Готовый заказ</button></a>
+      <a href="admin.html"><button class="tab-button" id="adminTabButton" disabled>Админ</button></a>
+    </div>
+    <div id="accountSection">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" />
+      <span id="userFio"></span>
+      <button onclick="logout()">Выйти</button>
+    </div>
+  </nav>
+
+  <section id="adminTab" class="tab-content active">
+    <h2>Управление ролями пользователей</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>ФИО</th>
+          <th>Текущая роль</th>
+          <th>Изменить роль</th>
+        </tr>
+      </thead>
+      <tbody id="usersTableBody">
+        <!-- Данные пользователей будут добавлены через JS -->
+      </tbody>
+    </table>
+  </section>
+
+  <script src="auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const email = localStorage.getItem('userEmail');
+      const role = localStorage.getItem('userRole');
+      const userFio = localStorage.getItem('userFIO') || email;
+
+      if (!email || role !== 'admin') {
+        alert('Доступ запрещён');
+        window.location.href = 'clients.html';
+        return;
+      }
+
+      const accountSection = document.getElementById('accountSection');
+      const userFioSpan = document.getElementById('userFio');
+      if (accountSection && userFioSpan) {
+        userFioSpan.textContent = userFio;
+        accountSection.style.display = 'flex';
+      }
+
+      loadUsers();
+    });
+
+    async function loadUsers() {
+      try {
+        const response = await fetch('get_users.php');
+        const users = await response.json();
+
+        const tbody = document.getElementById('usersTableBody');
+        tbody.innerHTML = '';
+
+        users.forEach(user => {
+          const tr = document.createElement('tr');
+
+          tr.innerHTML = `
+            <td>${user.email}</td>
+            <td>${user.lastname} ${user.firstname} ${user.middlename}</td>
+            <td>${user.role}</td>
+            <td>
+              <select onchange="updateRole('${user.email}', this.value)">
+                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Администратор</option>
+                <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>Зам. директора</option>
+                <option value="worker" ${user.role === 'worker' ? 'selected' : ''}>Работник</option>
+              </select>
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Ошибка загрузки пользователей:', error);
+      }
+    }
+
+    async function updateRole(email, newRole) {
+      if (email === localStorage.getItem('userEmail')) {
+        alert('Вы не можете изменить свою роль.');
+        return;
+      }
+
+      try {
+        const response = await fetch('update_role.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, role: newRole })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('Роль успешно обновлена');
+          loadUsers();
+        } else {
+          alert('Ошибка при обновлении роли');
+        }
+      } catch (error) {
+        console.error('Ошибка запроса:', error);
+        alert('Произошла ошибка на сервере');
+      }
+    }
+  </script>
+</body>
+</html>

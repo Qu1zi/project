@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Заказы</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <div>
+      <a href="clients.html"><button class="tab-button">Заказчики</button></a>
+      <a href="products.html"><button class="tab-button">Изделия</button></a>
+      <a href="resonators.html"><button class="tab-button">Резонаторы</button></a>
+      <a href="orders.html"><button class="tab-button" disabled>Заказы</button></a>
+      <a href="routes.html"><button class="tab-button">Маршрут</button></a>
+      <a href="done.html"><button class="tab-button">Готовый заказ</button></a>
+      <a href="admin.html"><button class="tab-button" id="adminTabButton">Админ</button></a>
+    </div>
+    <div id="accountSection">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" />
+      <span id="userFio"></span>
+      <button onclick="logout()">Выйти</button>
+    </div>
+  </nav>
+
+  <section id="ordersTab" class="tab-content active">
+    <h2>Заказы</h2>
+    <button class="action-button secondary" onclick="toggleForm('orderForm')">Добавить заказ</button>
+    <form id="orderForm" class="hidden" onsubmit="addOrder(event)">
+      <select required id="clientID">
+        <option disabled selected>Выберите заказчика</option>
+      </select>
+      <select required id="productID">
+        <option disabled selected>Выберите изделие</option>
+      </select>
+      <input type="number" placeholder="Кол-во к запуску" required id="productsNum" />
+      <input type="date" placeholder="Дата получения заказа" required id="orderDateReceipt" />
+      <input type="date" placeholder="Дата назначения" required id="assignedExecutionDate" />
+      <button type="submit">Сохранить</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Заказчик</th>
+          <th>Изделие</th>
+          <th>Кол-во</th>
+          <th>Дата</th>
+          <th>Действие</th>
+        </tr>
+      </thead>
+      <tbody id="orderTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const email = localStorage.getItem('userEmail');
+      if (!email) {
+        window.location.href = 'index.html';
+      } else {
+        const accountSection = document.getElementById('accountSection');
+        const userFioSpan = document.getElementById('userFio');
+        const userFio = localStorage.getItem('userFIO') || email;
+        if (accountSection && userFioSpan) {
+          userFioSpan.textContent = userFio;
+          accountSection.style.display = 'flex';
+        }
+        if (typeof loadProducts === 'function') {
+          loadClientOptions();
+          loadProductOptions();
+          loadProducts();
+        }
+      }
+      hideIfNotAllowed('adminTabButton', ['admin']);
+    });
+  </script>
+  <!-- Модальное окно просмотра заказа -->
+  <div id="orderModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="orderModalBody"></div>
+    </div>
+  </div>
+  <!-- Модальное окно редактирования заказа -->
+  <div id="editOrderModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close" onclick="closeEditModal()">&times;</span>
+      <h3>Редактирование заказа</h3>
+      <form id="editOrderForm" onsubmit="submitEditOrder(event)">
+        <input type="hidden" id="editOrderID" name="orderID">
+        <label>Клиент:</label>
+        <select id="editClientID" name="clientID"></select>
+        <label>Изделие:</label>
+        <select id="editProductID" name="productID"></select>
+        <label>Количество изделий:</label>
+        <input type="number" id="editProductsNum" name="productsNum" required>
+        <label>Дата приёма:</label>
+        <input type="date" id="editOrderDateReceipt" name="orderDateReceipt">
+        <label>Назначенная дата:</label>
+        <input type="date" id="editAssignedExecutionDate" name="assignedExecutionDate">
+        <label>Фактическая дата:</label>
+        <input type="date" id="editActualExecutionDate" name="actualExecutionDate">
+        <button type="submit">Сохранить изменения</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

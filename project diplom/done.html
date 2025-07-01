@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Готовые заказы</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <div>
+      <a href="clients.html"><button class="tab-button">Заказчики</button></a>
+      <a href="products.html"><button class="tab-button">Изделия</button></a>
+      <a href="resonators.html"><button class="tab-button">Резонаторы</button></a>
+      <a href="orders.html"><button class="tab-button">Заказы</button></a>
+      <a href="routes.html"><button class="tab-button">Маршрут</button></a>
+      <a href="done.html"><button class="tab-button" disabled>Готовый заказ</button></a>
+      <a href="admin.html"><button class="tab-button" id="adminTabButton">Админ</button></a>
+    </div>
+    <div id="accountSection" style="display: none; align-items: center; gap: 10px;">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" style="width: 32px; height: 32px; border-radius: 50%;" />
+      <span id="userFio"></span>
+      <button onclick="logout()">Выйти</button>
+    </div>
+  </nav>
+
+  <section id="doneTab" class="tab-content active">
+    <h2>Готовые заказы</h2>
+    <button class="action-button secondary" onclick="toggleForm('doneForm')">Добавить готовый заказ</button>
+    <form id="doneForm" class="hidden" onsubmit="addDone(event)" enctype="multipart/form-data">
+      <label>Заказ:
+        <select id="doneOrderSelect" required onchange="updateClientProductFields()"></select>
+      </label>
+      <div>
+        <label>Клиент:</label>
+        <div id="doneClientName" class="info-box"></div>
+      </div>
+      <div>
+        <label>Изделие:</label>
+        <div id="doneProductName" class="info-box"></div>
+      </div>
+      <div>
+        <label>Кол-во изделий:</label>
+        <div id="doneProductsNum" class="info-box"></div>
+      </div>
+      <label>Резонатор:
+        <select id="doneResonatorSelect" required></select>
+      </label>
+      <input type="text" id="doneNote" placeholder="Примечание" />
+      <input type="file" id="doneFiles" name="doneFiles[]" multiple accept=".doc,.docx,.pdf,.csv" />
+      <button type="submit">Сохранить</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Клиент</th>
+          <th>Изделие</th>
+          <th>Заказ</th>
+          <th>Резонатор</th>
+          <th>Примечание</th>
+          <th>Кол-во</th>
+          <th>Файлы</th>
+        </tr>
+      </thead>
+      <tbody id="doneTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const email = localStorage.getItem('userEmail');
+    const fio = localStorage.getItem('userFIO') || email;
+
+    if (!email) {
+      window.location.href = 'index.html';
+    } else {
+      const userFioSpan = document.getElementById('userFio');
+      const accountSection = document.getElementById('accountSection');
+      
+      if (userFioSpan && accountSection) {
+        userFioSpan.textContent = fio;
+        accountSection.style.display = 'flex';
+      }
+
+      // Загрузка данных
+      loadDone();
+      loadOrdersReady();
+      loadResonatorsForDone();
+    }
+    hideIfNotAllowed('adminTabButton', ['admin']);
+  });
+  </script>
+</body>
+</html>
